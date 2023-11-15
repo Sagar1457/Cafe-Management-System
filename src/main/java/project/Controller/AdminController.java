@@ -10,24 +10,22 @@ import project.Entity.Category;
 import project.Entity.Products;
 import project.Entity.Users;
 import project.ServiceImp.CartServiceImp;
-import project.ServiceImp.CategoryService;
+import project.ServiceImp.CategoryServiceImp;
 import project.ServiceImp.ProductServiceImp;
 import project.ServiceImp.UserServiceImp;
 
 @RestController
+@RequestMapping("/admin")
 public class AdminController {
 	
+	//=======================Users=====================
 	@Autowired
 	private UserServiceImp userservice;
 	
-	@Autowired
-	private CartServiceImp cartservice;
-	
-	@Autowired
-	private ProductServiceImp productservice;
-	
-	@Autowired
-	private CategoryService categoryservice;
+	@PostMapping("/newregistration")
+	public Users newuser(@RequestBody Users user) {
+		return userservice.newuser(user);
+	}
 	
 	@GetMapping("/users")
 	public List<Users> getallusers() {
@@ -39,25 +37,24 @@ public class AdminController {
 		return userservice.GetById(id);
 	}
 	
-	@GetMapping("/Users/{username}")
+	@GetMapping("/users/{username}")
 	public Users FindByusername(@PathVariable String username) {
 		return userservice.finduser(username);
 	}
 	
-	@DeleteMapping("/user/{id}")
+	@DeleteMapping("/user/delete/{id}")
 	public String deleteuser(@PathVariable Long id) {
 		return userservice.deleteuser(id);
 	}
 	
-	@PutMapping("/updateuser/{id}")
+	@PutMapping("/user/update/{id}")
 	public Users updateuser(@PathVariable Long id,@RequestBody Users user) {
 		return userservice.updateuser(id, user);
 	}
 	
-	@PostMapping("/newregistration")
-	public Users newuser(@RequestBody Users user) {
-		return userservice.newuser(user);
-	}
+	//===============================Cart===================
+	@Autowired
+	private CartServiceImp cartservice;
 	
 	@PutMapping("/cart/{id}")
 	public Cart savecart(@PathVariable Long id,@RequestBody Cart cart) {
@@ -69,29 +66,13 @@ public class AdminController {
 		return cartservice.getallcarts();
 	}
 	
-	@PostMapping("/product")
-	public Products addproduct(Products product){
+	//===============================products======================
+	@Autowired
+	private ProductServiceImp productservice;
+	
+	@PostMapping("/product/add")
+	public Products addproduct(@RequestBody Products product){
 		return productservice.addproduct(product);
-	}
-	
-	@PostMapping("/products/{productId}/{cartId}")
-	public String addProductToCart(@RequestParam Long  productId,@RequestParam Long cartId) {
-		return productservice.addProductToCart(productId, cartId);
-	}
-	
-	@GetMapping("/products/{cartId}")
-	public List<Products> getProductsInCart(@PathVariable Long cartId){
-		return productservice.getProductsInCart(cartId);
-	}
-	
-	@PostMapping("/category/{productId}/{categoryId}")
-	public String addCategoryToProduct(@RequestParam Long  productId,@RequestParam Long categoryId) {
-		return categoryservice.addCategoryToProduct(productId, categoryId);
-	}
-	
-	@GetMapping("/products/category/{categoryId}")
-	public List<Products> getProductsInCategory(@PathVariable Long categoryId){
-		return categoryservice.getProductsInCategory(categoryId);
 	}
 	
 	@GetMapping("/products")
@@ -99,8 +80,47 @@ public class AdminController {
 		return productservice.getallproduct();
 	}
 	
-	@PostMapping("/addcategory")
-	public Category addcategory(Category category) {
+	@PostMapping("/cart/addproducts/{productId}/{cartId}")
+	public String addProductToCart(@RequestParam Long  productId,@RequestParam Long cartId) {
+		return productservice.addProductToCart(productId, cartId);
+	}
+	
+	@GetMapping("/cart/products/{cartId}")
+	public List<Products> getProductsInCart(@PathVariable Long cartId){
+		return productservice.getProductsInCart(cartId);
+	}
+		
+	@DeleteMapping("/product/delete/{id}")
+	public String Deleteproduct(@PathVariable Long id) {
+		return productservice.Deleteproduct(id);
+	}
+	
+	@GetMapping("/product/{id}")
+	public Products findById(@PathVariable Long id) {
+		return productservice.findById(id);
+	}
+	
+	@PutMapping("/product/update/{id}")
+	public Products updateproduct(@PathVariable Long id,@RequestBody Products product) {
+		return productservice.Updateproduct(id,product);
+	}
+	
+	//=======================================Category==========================
+	@Autowired
+	private CategoryServiceImp categoryservice;
+	
+	@PostMapping("/category/addproducts")
+	public String addCategoryToProduct(@RequestParam Long  productId,@RequestParam Long categoryId) {
+		return categoryservice.addCategoryToProduct(productId, categoryId);
+	}
+	
+	@GetMapping("/category/products/{categoryId}")
+	public List<Products> getProductsInCategory(@PathVariable Long categoryId){
+		return categoryservice.getProductsInCategory(categoryId);
+	}
+	
+	@PostMapping("/category/add")
+	public Category addcategory(@RequestBody Category category) {
 		return categoryservice.addcategory(category);
 	}
 	
@@ -109,4 +129,14 @@ public class AdminController {
 		return categoryservice.getallcategory();
 	}
 	
+	@DeleteMapping("category/delete/{id}")
+	 public String Deletecategory(@PathVariable Long id) {
+		return categoryservice.Deletecategory(id);
+	}
+	
+	@PutMapping("/category/update/{id}")
+	 public Category updatecategory(@PathVariable Long id,@RequestBody Category category) {
+		return categoryservice.updatecategory(id, category);
+		
+	}
 }

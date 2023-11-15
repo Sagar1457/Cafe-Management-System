@@ -20,7 +20,11 @@ public class Users {
 	private Long user_id;
 	
 	@NotNull
-	@Column(name="username",length=30)
+	@Column(name="fullname")
+	private String Fullname;
+	
+	@NotNull
+	@Column(name="username",length=30, unique=true)
 	private String username; 
 	
 	@NotNull
@@ -28,18 +32,21 @@ public class Users {
 	private String password;
 	
 	@NotNull
-	@Column(name="ph_no",length=15)
+	@Column(name="ph_no",length=15, unique=true)
 	private Long number;
 	
 	@NotNull
-	@Column(name="Email")
+	@Column(name="Email", unique=true)
 	private String email;
+	
+	@Column(name="Address")
+	private String address;
 	
 	@Column(name="Role")
 	private String role="customer";
 	
 	@Column(name="Status")
-	private String Status="In-Active";
+	private String Status="Active";
 	
 	@JsonIgnore
 	@OneToOne(mappedBy="user",cascade=CascadeType.ALL)

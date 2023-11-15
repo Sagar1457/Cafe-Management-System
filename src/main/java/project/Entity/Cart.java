@@ -16,13 +16,11 @@ public class Cart {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long Id;
 	
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name="user_id")
 	private Users user;
 	
-	@ManyToMany(mappedBy="cart")
+	@ManyToMany(mappedBy="cart",cascade = CascadeType.ALL)
 	private List<Products> products;
-	
-	private float totalprice;
 	
 }

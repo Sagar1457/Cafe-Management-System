@@ -32,26 +32,43 @@ public class UserServiceImp implements Userservice {
 	@Transactional
 	public List<Users> getallusers(){
 		List<Users> users=userdao.findAll();
-		return users;
+		if(users.size()!=0) {
+		return users;}
+		else
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND,"users not found");
 	}
 	
 	@Transactional
 	public Users GetById(Long id) {
+		try {
 		Users user=userdao.findById(id).get();
 		return user;
+		}catch(Exception e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND,"user not found");
+		}
 	}
 	
 	@Transactional
 	public Users updateuser(Long id,Users user) {
-		userdao.findById(id).get();
-		if(user.getNumber()!=null) {
-			user.setEmail(user.getEmail());
+		try {
+		Users upuser=userdao.findById(id).get();
+		if(user.getEmail()!=null) {
+			upuser.setEmail(user.getEmail());
 		}
 		if(user.getNumber()!=null) {
-			user.setNumber(user.getNumber());
+			upuser.setNumber(user.getNumber());
 		}
-		userdao.save(user);
-		return user;
+		if(user.getFullname()!=null) {
+			upuser.setFullname(user.getFullname());
+		}
+		if(user.getAddress()!=null) {
+			upuser.setAddress(user.getAddress());
+		}
+		userdao.save(upuser);
+		return upuser;
+		}catch(Exception e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND,"user not found");
+		}
 	}
 	
 	@Transactional
@@ -60,9 +77,10 @@ public class UserServiceImp implements Userservice {
 		{
 			Users user=userdao.findById(id).get();
 			userdao.delete(user);
-			return "users removed";
+			return "user removed";
 		}catch(Exception e) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+			
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND,"user not found");
 		}
 	}
 
@@ -72,14 +90,14 @@ public class UserServiceImp implements Userservice {
 				Users user=userdao.findByUsername(username);
 				return user;
 			}catch(Exception e) {
-				throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+				throw new ResponseStatusException(HttpStatus.NOT_FOUND,"username not found");
 			}
 		
 	}
 	
 	@Override
 	public Users login(String username, String password) 
-	{
+	{	
 		 Users user=userdao.findByUsernameAndPassword(username, password);
 		 return user;
 	}
