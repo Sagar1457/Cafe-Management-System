@@ -15,6 +15,7 @@ import project.ServiceImp.ProductServiceImp;
 import project.ServiceImp.UserServiceImp;
 
 @RestController
+@CrossOrigin(origins ="http://localhost:4200")
 @RequestMapping("/admin")
 public class AdminController {
 	

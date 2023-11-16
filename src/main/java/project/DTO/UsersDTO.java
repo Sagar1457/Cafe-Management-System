@@ -8,6 +8,8 @@ public class UsersDTO
 {
 	private Long user_id;
 	
+	private String Fullname;
+	
 	private String username; 
 
 	private String password;
@@ -15,6 +17,8 @@ public class UsersDTO
 	private Long number;
 	
 	private String email;
+	
+	private String address;
 	
 	private String role="customer";
 	

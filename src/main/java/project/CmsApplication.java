@@ -19,8 +19,9 @@ public class CmsApplication {
 		final FilterRegistrationBean registrationBean=new FilterRegistrationBean();
 			registrationBean.setFilter(new JwtFilter());
 		    registrationBean.addUrlPatterns("/api/*");
+		    //registrationBean.addUrlPatterns("/admin/*");
+		   // registrationBean.addUrlPatterns("/user/*");
 			return registrationBean;
-	
 	}
 
 	public static void main(String[] args) {
