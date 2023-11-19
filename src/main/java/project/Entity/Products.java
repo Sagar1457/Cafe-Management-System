@@ -20,7 +20,7 @@ public class Products {
 	
 	@NotNull
 	@Column(name="product_name",unique=true)
-	private String product_name;
+	private String productName;
 	
 	@NotNull
 	@Column(name="product_price")

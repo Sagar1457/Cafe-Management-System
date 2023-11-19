@@ -1,5 +1,6 @@
 package project.Controller;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -18,9 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import project.Entity.Cart;
 import project.Entity.Category;
 import project.Entity.Products;
 import project.Entity.Users;
+import project.ServiceImp.CartServiceImp;
 import project.ServiceImp.CategoryServiceImp;
 import project.ServiceImp.ProductServiceImp;
 import project.ServiceImp.UserServiceImp;
@@ -38,11 +41,14 @@ public class UserController {
 	
 	@Autowired
 	private CategoryServiceImp categoryservice;
+	
+	@Autowired
+	private CartServiceImp cartservice;
 
 	@PostMapping("/login")
-	public String validate(@RequestBody Users user) throws ServletException
+	public Users validate(@RequestBody Users user) throws ServletException
 	{
-		String jwtToken="";
+		//String jwtToken="";
 		if(user.getUsername()==null || user.getPassword()==null)
 		{
 			throw new ServletException("Please fill in username and password");
@@ -55,13 +61,14 @@ public class UserController {
 		{
 			throw new ServletException("User not found");
 		}
-		jwtToken= Jwts.builder()
+	/*	jwtToken= Jwts.builder()
 				.claim("user",user.getUsername())
 				.claim("role", user.getRole())
 				.setIssuedAt(new Date(System.currentTimeMillis()))
 				.setExpiration(new Date(System.currentTimeMillis()+1000 * 60 * 60 * 10 ))
 				.signWith(SignatureAlgorithm.HS256, "secretkey").compact();
-		return jwtToken;
+		return jwtToken;*/
+		return user;
 	}
 	
 	@PostMapping("/newregistration")
@@ -75,7 +82,7 @@ public class UserController {
 	}
 	
 	@PostMapping("/products/{productId}/{cartId}")
-	public String addProductToCart(@RequestParam Long  productId,@RequestParam Long cartId) {
+	public Cart addProductToCart(@RequestParam Long  productId,@RequestParam Long cartId) {
 		return productservice.addProductToCart(productId, cartId);
 	}
 	
@@ -87,6 +94,22 @@ public class UserController {
 	@GetMapping("/products")
 	public List<Products> getallproduct(){
 		return productservice.getallproduct();
+	}
+	
+	@GetMapping("products/{name}")
+	public Products getByname(@PathVariable String name){
+		return productservice.findByProductName(name);
+	}
+	
+	@GetMapping("products/category/{name}")
+	public Collection<Products> getBycategory(@PathVariable String name){
+		return productservice.findByCategory(name);
+	}
+	
+	@GetMapping("/cart/{id}")
+	public Cart getcartByid(@PathVariable Long id){
+		return cartservice.getCartById(id);
+		
 	}
 }
 

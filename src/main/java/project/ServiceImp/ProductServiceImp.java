@@ -1,5 +1,7 @@
 package project.ServiceImp;
 
+
+import java.util.Collection;
 import java.util.List;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
@@ -32,7 +34,7 @@ public class ProductServiceImp implements ProdcutsService {
 	}
 	
 	@Transactional
-	public String addProductToCart(Long productId, Long cartId) {
+	public Cart addProductToCart(Long productId, Long cartId) {
         Products product = productdao.findById(productId)
                 .orElseThrow(() -> new EntityNotFoundException("Product not found with id: " + productId));
 
@@ -43,8 +45,24 @@ public class ProductServiceImp implements ProdcutsService {
         product.getCart().add(cart);
         cartdao.save(cart);
         productdao.save(product);
-        return "product added to cart";
+        return cart;
     }
+	
+	@Transactional
+	public Cart deleteproductincart(Long productid,Long cartId) {
+        Products product = productdao.findById(productid)
+                .orElseThrow(() -> new EntityNotFoundException("Product not found with id: " + productid));
+
+        Cart cart = cartdao.findById(cartId)
+                .orElseThrow(() -> new EntityNotFoundException("Cart not found with id: " + cartId));
+        int i=cart.getProducts().indexOf(product);
+        cart.getProducts().remove(i);
+        int j=product.getCart().indexOf(cart);
+        product.getCart().remove(j);
+        cartdao.saveAndFlush(cart);
+        productdao.saveAndFlush(product);
+        return cart;
+	}
 	
 	@Transactional
 	 public List<Products> getProductsInCart(Long cartId) {
@@ -61,11 +79,11 @@ public class ProductServiceImp implements ProdcutsService {
 	}
 
 	@Transactional
-	public String Deleteproduct(Long id) {
+	public Products Deleteproduct(Long id) {
 		try {
 			Products product=productdao.findById(id).get();
 			productdao.delete(product);
-			return "Product Deleted";
+			return product;
 		}catch(Exception e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND,"product not found with id="+id);
 		}
@@ -80,12 +98,13 @@ public class ProductServiceImp implements ProdcutsService {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND,"product not found with id="+id);
 		}
 	}
-
+	
+	@Transactional
 	public Products Updateproduct(Long id, Products product) {
 		try {
 			Products upproduct=productdao.findById(id).get();
-			if(product.getProduct_name()!=null) {
-				upproduct.setProduct_name(product.getProduct_name());
+			if(product.getProductName()!=null) {
+				upproduct.setProductName(product.getProductName());
 			}
 			if(product.getProduct_price()!=0) {
 				upproduct.setProduct_price(product.getProduct_price());
@@ -94,6 +113,28 @@ public class ProductServiceImp implements ProdcutsService {
 			return upproduct;
 		}catch(Exception e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND,"product not found with id="+id);
+		}
+	}
+	
+	@Override
+	public Products findByProductName(String productName) {
+		try {
+			Products product=productdao.findByProductName(productName);
+			return product;
+		}catch(Exception e) {
+			
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND,"product not found with product="+productName);
+		}
+	}
+
+	@Override
+	public Collection<Products> findByCategory(String category) {
+		try {
+			Collection<Products> product=productdao.findByCategory(category);
+			return product;
+		}catch(Exception e) {
+			
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND,"product not found with category="+category);
 		}
 	}
 		

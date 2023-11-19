@@ -9,6 +9,8 @@ import project.Entity.Cart;
 import project.Entity.Category;
 import project.Entity.Products;
 import project.Entity.Users;
+import project.JpaRepository.CartJpa;
+import project.JpaRepository.UserJpa;
 import project.ServiceImp.CartServiceImp;
 import project.ServiceImp.CategoryServiceImp;
 import project.ServiceImp.ProductServiceImp;
@@ -18,6 +20,12 @@ import project.ServiceImp.UserServiceImp;
 @CrossOrigin(origins ="http://localhost:4200")
 @RequestMapping("/admin")
 public class AdminController {
+	
+	@Autowired
+	private UserJpa userdao;
+	
+	@Autowired
+	private CartJpa cartdao;
 	
 	//=======================Users=====================
 	@Autowired
@@ -44,7 +52,7 @@ public class AdminController {
 	}
 	
 	@DeleteMapping("/user/delete/{id}")
-	public String deleteuser(@PathVariable Long id) {
+	public Users deleteuser(@PathVariable Long id) {
 		return userservice.deleteuser(id);
 	}
 	
@@ -82,7 +90,7 @@ public class AdminController {
 	}
 	
 	@PostMapping("/cart/addproducts/{productId}/{cartId}")
-	public String addProductToCart(@RequestParam Long  productId,@RequestParam Long cartId) {
+	public Cart addProductToCart(@RequestParam Long  productId,@RequestParam Long cartId) {
 		return productservice.addProductToCart(productId, cartId);
 	}
 	
@@ -92,7 +100,7 @@ public class AdminController {
 	}
 		
 	@DeleteMapping("/product/delete/{id}")
-	public String Deleteproduct(@PathVariable Long id) {
+	public Products Deleteproduct(@PathVariable Long id) {
 		return productservice.Deleteproduct(id);
 	}
 	
@@ -106,13 +114,22 @@ public class AdminController {
 		return productservice.Updateproduct(id,product);
 	}
 	
+	@DeleteMapping("/cart/deleteproducts/")
+	public Cart removeproductincart(@RequestParam Long  productId,@RequestParam Long cartId){
+		return productservice.deleteproductincart(productId, cartId);
+	}
 	//=======================================Category==========================
 	@Autowired
 	private CategoryServiceImp categoryservice;
 	
 	@PostMapping("/category/addproducts")
-	public String addCategoryToProduct(@RequestParam Long  productId,@RequestParam Long categoryId) {
+	public Category addCategoryToProduct(@RequestParam Long  productId,@RequestParam Long categoryId) {
 		return categoryservice.addCategoryToProduct(productId, categoryId);
+	}
+	
+	@DeleteMapping("/category/deleteproduct")
+	public Category deleteCategoryToProduct(@RequestParam Long  productId,@RequestParam Long categoryId) {
+		return categoryservice.deleteproductincategory(productId, categoryId);
 	}
 	
 	@GetMapping("/category/products/{categoryId}")
@@ -130,14 +147,24 @@ public class AdminController {
 		return categoryservice.getallcategory();
 	}
 	
-	@DeleteMapping("category/delete/{id}")
-	 public String Deletecategory(@PathVariable Long id) {
+	@DeleteMapping("/category/delete/{id}")
+	 public Category Deletecategory(@PathVariable Long id) {
 		return categoryservice.Deletecategory(id);
 	}
 	
 	@PutMapping("/category/update/{id}")
 	 public Category updatecategory(@PathVariable Long id,@RequestBody Category category) {
 		return categoryservice.updatecategory(id, category);
-		
 	}
+	
+	@GetMapping("/category/{id}")
+	 public Category getById(@PathVariable Long id) {
+		return categoryservice.FindById(id);
+	}
+	
+	@GetMapping("/{userId}")
+    public List<Cart> getUserCart(@PathVariable Long userId) {
+        Users user = userdao.findById(userId).get();
+        return cartdao.findByUser(user);
+    }
 }

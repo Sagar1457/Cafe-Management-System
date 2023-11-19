@@ -3,12 +3,14 @@ package project.ServiceImp;
 import java.util.List;
 
 import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import project.Entity.Cart;
 import project.Entity.Category;
 import project.Entity.Products;
 import project.Entity.Users;
@@ -35,7 +37,8 @@ public class CategoryServiceImp {
 		
 	}
 	
-	public String addCategoryToProduct(Long productId, Long categoryId) {
+	@Transactional
+	public Category addCategoryToProduct(Long productId, Long categoryId) {
         Products product = productdao.findById(productId)
                 .orElseThrow(() -> new EntityNotFoundException("Product not found with id: " + productId));
 
@@ -46,8 +49,22 @@ public class CategoryServiceImp {
         product.setCategory(category);
         categorydao.save(category);
         productdao.save(product);
-        return "product added to category";
+        return category;
     }
+	
+	@Transactional
+	public Category deleteproductincategory(Long productid,Long categoryId) {
+        Category category = categorydao.findById(categoryId)
+                .orElseThrow(() -> new EntityNotFoundException("Category not found with id: " + categoryId));
+        
+        Products product = productdao.findById(productid)
+                .orElseThrow(() -> new EntityNotFoundException("Product not found with id: " + productid));
+        int i=category.getProducts().indexOf(product);
+        category.getProducts().remove(i);
+        categorydao.saveAndFlush(category);
+        productdao.save(product);
+        return category;
+	}
 	
 	 public List<Products> getProductsInCategory(Long categoryId) {
 	        Category category = categorydao.findById(categoryId)
@@ -72,15 +89,25 @@ public class CategoryServiceImp {
 		 }
 	 }
 	 
-	 public String Deletecategory(Long id) {
+	 public Category Deletecategory(Long id) {
 	 try
 		{
 			Category category=categorydao.findById(id).get();
 			categorydao.delete(category);
-			return "category removed";
+			return category;
 		}catch(Exception e) {
 			
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND,"category not found with id= "+id);
 		}
+	 }
+	 
+	 public Category FindById(Long id) {
+		 try {
+			 Category category=categorydao.findById(id).get();
+			 return category;
+		 }catch(Exception e) {
+				
+				throw new ResponseStatusException(HttpStatus.NOT_FOUND,"category not found with id= "+id);
+			}
 	 }
 }

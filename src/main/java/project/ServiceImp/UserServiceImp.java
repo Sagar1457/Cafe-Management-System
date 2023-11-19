@@ -72,12 +72,12 @@ public class UserServiceImp implements Userservice {
 	}
 	
 	@Transactional
-	public String deleteuser(Long id) {
+	public Users deleteuser(Long id) {
 		try
 		{
 			Users user=userdao.findById(id).get();
 			userdao.delete(user);
-			return "user removed";
+			return user;
 		}catch(Exception e) {
 			
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND,"user not found");
