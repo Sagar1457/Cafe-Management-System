@@ -12,4 +12,6 @@ import project.Entity.Products;
 
 public interface CartJpa extends JpaRepository<Cart, Long>{
 	List<Cart> findByUser(Users user);
+
+
 }

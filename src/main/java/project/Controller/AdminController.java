@@ -65,11 +65,6 @@ public class AdminController {
 	@Autowired
 	private CartServiceImp cartservice;
 	
-	@PutMapping("/cart/{id}")
-	public Cart savecart(@PathVariable Long id,@RequestBody Cart cart) {
-		return cartservice.savecart(id, cart);
-	}
-	
 	@GetMapping("/carts")
 	public List<Cart> getallcarts(){
 		return cartservice.getallcarts();

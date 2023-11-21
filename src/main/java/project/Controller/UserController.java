@@ -108,8 +108,9 @@ public class UserController {
 	
 	@GetMapping("/cart/{id}")
 	public Cart getcartByid(@PathVariable Long id){
-		return cartservice.getCartById(id);
+		return cartservice.getUsercartById(id);
 		
 	}
+	
 }
 
